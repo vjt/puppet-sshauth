@@ -1,5 +1,6 @@
 import "classes/*.pp"
 import "definitions/*.pp"
+import "definitions/private/*.pp"
 
 # Class: sshauth
 #
