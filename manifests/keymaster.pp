@@ -5,7 +5,7 @@
 
 class ssh::auth::keymaster {
 	# Set up key storage
-	file { $ssh::auth::keymaster_storage:
+	file { $sshauth::keymaster_storage:
 		ensure => directory,
 		owner  => puppet,
 		group  => puppet,
@@ -13,6 +13,5 @@ class ssh::auth::keymaster {
 	}
 
 	# Realize all virtual master keys
-	Ssh_auth_key_master <| |>
-
+	Sshauth::Key::Master <| |>
 }

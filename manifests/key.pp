@@ -1,4 +1,4 @@
-# ssh::auth::key
+# sshauth::key
 
 # Declare keys.  The approach here is just to define a bunch of
 # virtual resources, representing key files on the keymaster, client,
@@ -11,8 +11,8 @@
 # is done in the private definitions called by the virtual resources:
 # ssh_auth_key_{master,server,client}.
 
-define ssh::auth::key ($ensure = "present", $filename = "", $force = false, $group = "puppet", $home = "", $keytype = "rsa", $length = 2048, $maxdays = "", $mindate = "", $options = "", $user = "") {
-	ssh_auth_key_namecheck { "${title}-title": parm => "title", value => $title }
+define sshauth::key ($ensure = "present", $filename = "", $force = false, $group = "puppet", $home = "", $keytype = "rsa", $length = 2048, $maxdays = "", $mindate = "", $options = "", $user = "") {
+	sshauth::key::namecheck { "${title}-title": parm => "title", value => $title }
 
 	# apply defaults
 	$_filename = $filename ? { "" => "id_${keytype}", default => $filename }
@@ -23,30 +23,30 @@ define ssh::auth::key ($ensure = "present", $filename = "", $force = false, $gro
 	}
 	$_home = $home ? { "" => "/home/$_user",  default => $home }
 
-	ssh_auth_key_namecheck { "${title}-filename": parm => "filename", value => $_filename }
+	sshauth::key::namecheck { "${title}-filename": parm => "filename", value => $_filename }
 
-	@ssh_auth_key_master { $title:
+	@sshauth::key::master { $title:
 		ensure  => $ensure,
 		force   => $force,
 		keytype => $keytype,
 		length  => $_length,
 		maxdays => $maxdays,
-		mindate => $mindate,
+		mindate => $mindate
 	}
 
-	@ssh_auth_key_client { $title:
+	@sshauth::key::client { $title:
 		ensure   => $ensure,
 		filename => $_filename,
 		group    => $group,
 		home     => $_home,
-		user     => $_user,
+		user     => $_user
 	}
 
-	@ssh_auth_key_server { $title:
+	@sshauth::key::server { $title:
 		ensure  => $ensure,
 		group   => $group,
 		home    => $_home,
 		options => $options,
-		user    => $_user,
+		user    => $_user
 	}
 }

@@ -1,18 +1,18 @@
-# ssh_auth_key_master
+# sshauth::key::master
 #
 # Create/regenerate/remove a key pair on the keymaster.
 # This definition is private, i.e. it is not intended to be called directly by users.
 # ssh::auth::key calls it to create virtual keys, which are realized in ssh::auth::keymaster.
 
-define ssh_auth_key_master ($ensure, $force, $keytype, $length, $maxdays, $mindate) {
+define sshauth::key::master ($ensure, $force, $keytype, $length, $maxdays, $mindate) {
 	Exec { path => "/usr/bin:/usr/sbin:/bin:/sbin" }
 	File {
 		owner => puppet,
 		group => puppet,
-		mode  => 600,
+		mode  => 600
 	}
 
-	$keydir = "${ssh::auth::keymaster_storage}/${title}"
+	$keydir = "${sshauth::keymaster_storage}/${title}"
 	$keyfile = "${keydir}/key"
 
 	file {
@@ -58,7 +58,7 @@ define ssh_auth_key_master ($ensure, $force, $keytype, $length, $maxdays, $minda
 			if $reason {
 				exec { "Revoke previous key ${title}: ${reason}":
 					command => "rm $keyfile ${keyfile}.pub",
-					before  => Exec["Create key $title: $keytype, $length bits"],
+					before  => Exec["Create key $title: $keytype, $length bits"]
 				}
 			}
 		}
@@ -73,8 +73,8 @@ define ssh_auth_key_master ($ensure, $force, $keytype, $length, $maxdays, $minda
 			user    => "puppet",
 			group   => "puppet",
 			creates => $keyfile,
-			require => File[$keydir],
 			before  => File[$keyfile, "${keyfile}.pub"],
+			require => File[$keydir]
 		}
 	} # if $ensure  == "present"
 }

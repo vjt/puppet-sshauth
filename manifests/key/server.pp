@@ -1,11 +1,11 @@
-# ssh_auth_key_server
+# sshauth::key::server
 #
 # Install a public key into a server user's authorized_keys(5) file.
 # This definition is private, i.e. it is not intended to be called directly by users.
 
-define ssh_auth_key_server ($ensure, $group, $home, $options, $user) {
+define sshauth::key::server ($ensure, $group, $home, $options, $user) {
 	# on the keymaster:
-	$key_src_dir = "${ssh::auth::keymaster_storage}/${title}"
+	$key_src_dir = "${sshauth::keymaster_storage}/${title}"
 	$key_src_file = "${key_src_dir}/key.pub"
 
 	# on the server:
@@ -29,11 +29,11 @@ define ssh_auth_key_server ($ensure, $group, $home, $options, $user) {
 		$key_src_content = file($key_src_file, "/dev/null")
 		
 		if ! $key_src_content {
-			notify { "Public key file $key_src_file for key $title not found on keymaster; skipping ensure => present": }
+			notify("Public key file $key_src_file for key $title not found on keymaster; skipping ensure => present")
 		} else {
 			if $ensure == "present" and $key_src_content !~ /^(ssh-...) ([^ ]*)/ {
 				err("Can't parse public key file $key_src_file")
-				notify { "Can't parse public key file $key_src_file for key $title on the keymaster: skipping ensure => $ensure": }
+				notify("Can't parse public key file $key_src_file for key $title on the keymaster: skipping ensure => $ensure")
 			} else {
 				$keytype = $1
 				$modulus = $2

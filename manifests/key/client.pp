@@ -1,21 +1,21 @@
-# ssh_auth_key_client
+# sshauth::key::client
 #
 # Install a key pair into a user's account.
 # This definition is private, i.e. it is not intended to be called directly by users.
 
-define ssh_auth_key_client ($ensure, $filename, $group, $home, $user) {
+define sshauth::key::client ($ensure, $filename, $group, $home, $user) {
 	File {
 		owner   => $user,
 		group   => $group,
 		mode    => 600,
-		require => [ User[$user], File[$home]],
+		require => [ User[$user], File[$home] ]
 	}
 
 	$key_src_file = "${ssh::auth::keymaster_storage}/${title}/key" # on the keymaster
 	$key_tgt_file = "${home}/.ssh/${filename}" # on the client
-
 	$key_src_content_pub = file("${key_src_file}.pub", "/dev/null")
-	if $ensure == "absent" or $key_src_content_pub =~ /^(ssh-...) ([^ ]+)/ {
+	
+	if ( $ensure == "absent" or $key_src_content_pub =~ /^(ssh-...) ([^ ]+)/ ) {
 		$keytype = $1
 		$modulus = $2
 		file {
@@ -28,6 +28,6 @@ define ssh_auth_key_client ($ensure, $filename, $group, $home, $user) {
 				mode    => 644;
 		}
 	} else {
-		notify { "Private key file $key_src_file for key $title not found on keymaster; skipping ensure => present": }
+		notify("Private key file $key_src_file for key $title not found on keymaster; skipping ensure => present")
 	}
 }

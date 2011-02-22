@@ -1,10 +1,6 @@
-import "classes/*.pp"
-import "definitions/*.pp"
-import "definitions/private/*.pp"
-
 # Class: sshauth
 #
-# This module manages ssh::auth
+# This module manages sshauth
 #
 # Parameters:
 #
@@ -14,7 +10,7 @@ import "definitions/private/*.pp"
 #
 # Sample Usage:
 #
-class ssh::auth {
+class sshauth {
 	$keymaster_storage = "/var/lib/keys" 
 
 	Exec { path => "/usr/bin:/usr/sbin:/bin:/sbin" }

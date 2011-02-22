@@ -1,0 +1,6 @@
+{
+    "license": "GPL2",
+    "author": "Andrew E. Schulman",
+    "version": "0.3.2",
+    "source": "http://github.com/vurbia/puppet-sshauth/"
+}
