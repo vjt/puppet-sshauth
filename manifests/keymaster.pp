@@ -4,8 +4,10 @@
 # Create key storage; create, regenerate, and remove key pairs
 
 class sshauth::keymaster {
+	include sshauth::params
+	
 	# Set up key storage
-	file { $sshauth::keymaster_storage:
+	file { $sshauth::params::keymaster_storage:
 		ensure => directory,
 		owner  => puppet,
 		group  => puppet,

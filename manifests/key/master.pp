@@ -5,6 +5,8 @@
 # ssh::auth::key calls it to create virtual keys, which are realized in ssh::auth::keymaster.
 
 define sshauth::key::master ($ensure, $force, $keytype, $length, $maxdays, $mindate) {
+	include sshauth::params
+	
 	Exec { path => "/usr/bin:/usr/sbin:/bin:/sbin" }
 	File {
 		owner => puppet,
@@ -12,7 +14,7 @@ define sshauth::key::master ($ensure, $force, $keytype, $length, $maxdays, $mind
 		mode  => 600
 	}
 
-	$keydir = "${sshauth::keymaster_storage}/${title}"
+	$keydir = "${sshauth::params::keymaster_storage}/${title}"
 	$keyfile = "${keydir}/key"
 
 	file {

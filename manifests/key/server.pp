@@ -4,8 +4,10 @@
 # This definition is private, i.e. it is not intended to be called directly by users.
 
 define sshauth::key::server ($ensure, $group, $home, $options, $user) {
+	include sshauth::params
+	
 	# on the keymaster:
-	$key_src_dir = "${sshauth::keymaster_storage}/${title}"
+	$key_src_dir = "${sshauth::params::keymaster_storage}/${title}"
 	$key_src_file = "${key_src_dir}/key.pub"
 
 	# on the server:

@@ -4,6 +4,8 @@
 # This definition is private, i.e. it is not intended to be called directly by users.
 
 define sshauth::key::client ($ensure, $filename, $group, $home, $user) {
+	include sshauth::params
+	
 	File {
 		owner   => $user,
 		group   => $group,
@@ -11,7 +13,7 @@ define sshauth::key::client ($ensure, $filename, $group, $home, $user) {
 		require => [ User[$user], File[$home] ]
 	}
 
-	$key_src_file = "${sshauth::keymaster_storage}/${title}/key" # on the keymaster
+	$key_src_file = "${sshauth::params::keymaster_storage}/${title}/key" # on the keymaster
 	$key_tgt_file = "${home}/.ssh/${filename}" # on the client
 	$key_src_content_pub = file("${key_src_file}.pub", "/dev/null")
 	
