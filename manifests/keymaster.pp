@@ -14,6 +14,6 @@ class sshauth::keymaster {
 		mode   => 644
 	}
 
-	# Realize all virtual master keys
-	Sshauth::Key::Master <| |>
+	# Collect all virtual master keys
+	Sshauth::Key::Master <<| |>>
 }

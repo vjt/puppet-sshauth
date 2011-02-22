@@ -35,5 +35,5 @@ define sshauth::server ($ensure = "", $group = "", $home = "", $options = "", $u
 		}
 	}                       
 
-	realize Sshauth::Key::Server[$title]
+	Sshauth::Key::Server <<| title == $title |>>
 }

@@ -25,7 +25,7 @@ define sshauth::key ($ensure = "present", $filename = "", $force = false, $group
 
 	sshauth::key::namecheck { "${title}-filename": parm => "filename", value => $_filename }
 
-	@sshauth::key::master { $title:
+	@@sshauth::key::master { $title:
 		ensure  => $ensure,
 		force   => $force,
 		keytype => $keytype,
@@ -34,7 +34,7 @@ define sshauth::key ($ensure = "present", $filename = "", $force = false, $group
 		mindate => $mindate
 	}
 
-	@sshauth::key::client { $title:
+	@@sshauth::key::client { $title:
 		ensure   => $ensure,
 		filename => $_filename,
 		group    => $group,
@@ -42,7 +42,7 @@ define sshauth::key ($ensure = "present", $filename = "", $force = false, $group
 		user     => $_user
 	}
 
-	@sshauth::key::server { $title:
+	@@sshauth::key::server { $title:
 		ensure  => $ensure,
 		group   => $group,
 		home    => $_home,

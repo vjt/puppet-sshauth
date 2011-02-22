@@ -36,5 +36,5 @@ define sshauth::client ($ensure="", $filename="", $group="", $home="", $user="")
 		}
 	}                       
 
-	realize Sshauth::Key::Client[$title]
+	Sshauth::Key::Client <<| title == $title |>>
 }
