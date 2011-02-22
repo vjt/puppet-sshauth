@@ -29,11 +29,11 @@ define sshauth::key::server ($ensure, $group, $home, $options, $user) {
 		$key_src_content = file($key_src_file, "/dev/null")
 		
 		if ! $key_src_content {
-			notify("Public key file $key_src_file for key $title not found on keymaster; skipping ensure => present")
+			notify { "Public key file $key_src_file for key $title not found on keymaster; skipping ensure => present": }
 		} else {
 			if $ensure == "present" and $key_src_content !~ /^(ssh-...) ([^ ]*)/ {
 				err("Can't parse public key file $key_src_file")
-				notify("Can't parse public key file $key_src_file for key $title on the keymaster: skipping ensure => $ensure")
+				notify { "Can't parse public key file $key_src_file for key $title on the keymaster: skipping ensure => $ensure": }
 			} else {
 				$keytype = $1
 				$modulus = $2

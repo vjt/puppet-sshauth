@@ -1,5 +1,4 @@
-TODO: Update with a default README text
-
 sshauth
+=======
 
-This is the sshauth module.
+ssh::auth provides centralized creation, distribution, and revocation of ssh keys for users. For full documentation please refer to http://projects.puppetlabs.com/projects/1/wiki/Module_Ssh_Auth_Patterns
