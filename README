@@ -2,3 +2,6 @@ sshauth
 =======
 
 ssh::auth provides centralized creation, distribution, and revocation of ssh keys for users. For full documentation please refer to http://projects.puppetlabs.com/projects/1/wiki/Module_Ssh_Auth_Patterns
+
+This implementation has changed the use of virtual resources to exported resources. While it adds the burden of enabling storeconfigs,
+the main advantage is that keys can be declared contextually and not at central location so the keymaster can see them.
