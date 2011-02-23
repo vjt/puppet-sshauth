@@ -17,12 +17,12 @@ define sshauth::key::server ($ensure, $group, $home, $options, $user) {
 		owner   => $user,
 		group   => $group,
 		require => User[$user],
-		mode    => 600,
+		mode    => 600
 	}
 
 	Ssh_authorized_key {
 		user   => $user,
-		target => $key_tgt_file,
+		target => $key_tgt_file
 	}
 
 	if $ensure == "absent" {
@@ -44,7 +44,7 @@ define sshauth::key::server ($ensure, $group, $home, $options, $user) {
 					ensure  => "present",
 					type    => $keytype,
 					key     => $modulus,
-					options => $options ? { "" => undef, default => $options },
+					options => $options ? { "" => undef, default => $options }
 				}
 			}
 		}

@@ -3,7 +3,7 @@
 # Install public keys onto clients
 
 define sshauth::server ($ensure = "", $group = "", $home = "", $options = "", $user = "") {
-	# Realize the virtual server keys.
+	# Collect the exported server keys.
 	# Override the defaults set in sshauth::key, as needed.
 	if $ensure {
 		Sshauth::Key::Server <| tag == $name |> {

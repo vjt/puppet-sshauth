@@ -14,6 +14,6 @@ class sshauth::keymaster {
 		mode   => 644
 	}
 
-	# Collect all virtual master keys
+	# Collect all exported master keys
 	Sshauth::Key::Master <<| |>>
 }

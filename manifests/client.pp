@@ -3,7 +3,7 @@
 # Install generated key pairs onto clients
 
 define sshauth::client ($ensure="", $filename="", $group="", $home="", $user="") {
-	# Realize the virtual client keys.
+	# Collect the exported client keys.
 	# Override the defaults set in sshauth::key, as needed.
 	if $ensure { 
 		Sshauth::Key::Client <| tag == $name |> { 
