@@ -14,7 +14,7 @@ define sshauth::key::master ($ensure, $force, $keytype, $length, $maxdays, $mind
 		mode  => 600
 	}
 
-	$keydir = "${sshauth::params::keymaster_storage}/${title}"
+	$keydir = "${sshauth::params::keymaster_storage}/${name}"
 	$keyfile = "${keydir}/key"
 
 	file {
@@ -58,9 +58,9 @@ define sshauth::key::master ($ensure, $force, $keytype, $length, $maxdays, $mind
 			}
 			
 			if $reason {
-				exec { "Revoke previous key ${title}: ${reason}":
+				exec { "Revoke previous key ${name}: ${reason}":
 					command => "rm $keyfile ${keyfile}.pub",
-					before  => Exec["Create key $title: $keytype, $length bits"]
+					before  => Exec["Create key $name: $keytype, $length bits"]
 				}
 			}
 		}
@@ -70,7 +70,7 @@ define sshauth::key::master ($ensure, $force, $keytype, $length, $maxdays, $mind
 		# store data about the key, i.e. $keytype and $length.  This avoids
 		# having to rerun ssh-keygen -l on every key at every run to determine
 		# the key length.
-		exec { "Create key $title: $keytype, $length bits":
+		exec { "Create key $name: $keytype, $length bits":
 			command => "ssh-keygen -t ${keytype} -b ${length} -f ${keyfile} -C \"${keytype} ${length}\" -N \"\"",
 			user    => "puppet",
 			group   => "puppet",

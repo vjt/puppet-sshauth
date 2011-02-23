@@ -12,41 +12,44 @@
 # ssh_auth_key_{master,server,client}.
 
 define sshauth::key ($ensure = "present", $filename = "", $force = false, $group = "puppet", $home = "", $keytype = "rsa", $length = 2048, $maxdays = "", $mindate = "", $options = "", $user = "") {
-	sshauth::key::namecheck { "${title}-title": parm => "title", value => $title }
+	sshauth::key::namecheck { "${name}-name": parm => "name", value => $name }
 
 	# apply defaults
 	$_filename = $filename ? { "" => "id_${keytype}", default => $filename }
 	$_length = $keytype ? { "rsa" => $length, "dsa" => 1024 }
 	$_user = $user ? {
-		""      => regsubst($title, '^([^@]*)@?.*$', '\1'),
+		""      => regsubst($name, '^([^@]*)@?.*$', '\1'),
 		default => $user,
 	}
 	$_home = $home ? { "" => "/home/$_user",  default => $home }
 
-	sshauth::key::namecheck { "${title}-filename": parm => "filename", value => $_filename }
+	sshauth::key::namecheck { "${name}-filename": parm => "filename", value => $_filename }
 
-	@@sshauth::key::master { $title:
+	@@sshauth::key::master { $name:
 		ensure  => $ensure,
 		force   => $force,
 		keytype => $keytype,
 		length  => $_length,
 		maxdays => $maxdays,
-		mindate => $mindate
+		mindate => $mindate,
+		tag     => $name
 	}
 
-	@@sshauth::key::client { $title:
+	@@sshauth::key::client { $name:
 		ensure   => $ensure,
 		filename => $_filename,
 		group    => $group,
 		home     => $_home,
-		user     => $_user
+		user     => $_user,
+		tag      => $name
 	}
 
-	@@sshauth::key::server { $title:
+	@@sshauth::key::server { $name:
 		ensure  => $ensure,
 		group   => $group,
 		home    => $_home,
 		options => $options,
-		user    => $_user
+		user    => $_user,
+		tag     => $name
 	}
 }

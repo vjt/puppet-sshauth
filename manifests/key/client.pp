@@ -13,7 +13,7 @@ define sshauth::key::client ($ensure, $filename, $group, $home, $user) {
 		require => [ User[$user], File[$home] ]
 	}
 
-	$key_src_file = "${sshauth::params::keymaster_storage}/${title}/key" # on the keymaster
+	$key_src_file = "${sshauth::params::keymaster_storage}/${name}/key" # on the keymaster
 	$key_tgt_file = "${home}/.ssh/${filename}" # on the client
 	$key_src_content_pub = file("${key_src_file}.pub", "/dev/null")
 	
@@ -26,10 +26,10 @@ define sshauth::key::client ($ensure, $filename, $group, $home, $user) {
 				content => file($key_src_file, "/dev/null");
 			"${key_tgt_file}.pub":
 				ensure  => $ensure,
-				content => "$keytype $modulus $title\n",
+				content => "$keytype $modulus $name\n",
 				mode    => 644;
 		}
 	} else {
-		notify { "Private key file $key_src_file for key $title not found on keymaster; skipping ensure => present": }
+		notify { "Private key file $key_src_file for key $name not found on keymaster; skipping ensure => present": }
 	}
 }
