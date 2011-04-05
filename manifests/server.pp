@@ -2,9 +2,20 @@
 #
 # Install public keys onto clients
 
-define sshauth::server ($ensure = "", $group = "", $home = "", $options = "", $user = "") {
+define sshauth::server ($ensure = '', $group = '', $home = '', $options = '',
+												$user = '') {
 	# Collect the exported server keys.
 	# Override the defaults set in sshauth::key, as needed.
+	
+	# Sanitize user and home
+	$_home = $home ? {
+		'' => $user ? {
+			'' => '',
+			default => "/home/${user}"
+		},
+		default => $home
+	}
+	
 	if $ensure {
 		Sshauth::Key::Server <| tag == $name |> {
 			ensure => $ensure
@@ -25,14 +36,13 @@ define sshauth::server ($ensure = "", $group = "", $home = "", $options = "", $u
 
 	if $user {
 		Sshauth::Key::Server <| tag == $name |> {
-			user => $user,
-			home => "/home/$user"
+			user => $user
 		}
 	}
 
-	if $home {
+	if $_home {
 		Sshauth::Key::Server <| tag == $name |> {
-			home => $home
+			home => $_home
 		}
 	}                       
 

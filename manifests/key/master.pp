@@ -7,60 +7,63 @@
 define sshauth::key::master ($ensure, $force, $keytype, $length, $maxdays, $mindate) {
 	include sshauth::params
 	
-	Exec { path => "/usr/bin:/usr/sbin:/bin:/sbin" }
+	Exec { path => '/usr/bin:/usr/sbin:/bin:/sbin' }
 	File {
 		owner => puppet,
 		group => puppet,
 		mode  => 600
 	}
 
-	$keydir = "${sshauth::params::keymaster_storage}/${name}"
+	$keydir  = "${sshauth::params::keymaster_storage}/${name}"
 	$keyfile = "${keydir}/key"
 
-	file {
-		"$keydir":
+	file { $keydir:
 			ensure => directory,
-			mode   => 644;
-		"$keyfile":
-			ensure => $ensure;
-		"${keyfile}.pub":
-			ensure => $ensure,
-			mode   => 644;
+			mode   => 644
+	}
+	
+	file { $keyfile:
+		ensure => $ensure
+	}
+	
+	file { "${keyfile}.pub":
+		ensure => $ensure,
+		mode   => 644
 	}
 
-	if $ensure == "present" {
+	if $ensure == 'present' {
     # Remove the existing key pair, if
     # * $force is true, or
     # * $maxdays or $mindate criteria aren't met, or
     # * $keytype or $length have changed
-		$keycontent = file("${keyfile}.pub", "/dev/null")
+		$keycontent = file("${keyfile}.pub", '/dev/null')
 		if $keycontent {
 			if $force {
-        		$reason = "force=true"
+        		$reason = 'force=true'
 			}
 			
-			if !$reason and $mindate and generate("/usr/bin/find", $keyfile, "!", "-newermt", "${mindate}") {
+			if !$reason and $mindate and generate('/usr/bin/find', $keyfile, '!', '-newermt', "${mindate}") {
 				$reason = "created before ${mindate}"
 			}
 			
-			if !$reason and $maxdays and generate("/usr/bin/find", $keyfile, "-mtime", "+${maxdays}") {
+			if !$reason and $maxdays and generate('/usr/bin/find', $keyfile, '-mtime', "+${maxdays}") {
 				$reason = "older than ${maxdays} days"
 			}
 			
 			if !$reason and $keycontent =~ /^ssh-... [^ ]+ (...) (\d+)$/ {
 				if $keytype != $1 {
-					$reason = "keytype changed: $1 -> $keytype"
+					$reason = "keytype changed: $1 -> ${keytype}"
 				} else {
 					if $length != $2 {
-						$reason = "length changed: $2 -> $length"
+						$reason = "length changed: $2 -> ${length}"
 					}
 				}
 			}
 			
 			if $reason {
 				exec { "Revoke previous key ${name}: ${reason}":
-					command => "rm $keyfile ${keyfile}.pub",
-					before  => Exec["Create key $name: $keytype, $length bits"]
+					command => "rm ${keyfile} ${keyfile}.pub",
+					before  => Exec["Create key ${name}: ${keytype}, ${length} bits"]
 				}
 			}
 		}
@@ -70,12 +73,12 @@ define sshauth::key::master ($ensure, $force, $keytype, $length, $maxdays, $mind
 		# store data about the key, i.e. $keytype and $length.  This avoids
 		# having to rerun ssh-keygen -l on every key at every run to determine
 		# the key length.
-		exec { "Create key $name: $keytype, $length bits":
+		exec { "Create key ${name}: ${keytype}, ${length} bits":
 			command => "ssh-keygen -t ${keytype} -b ${length} -f ${keyfile} -C \"${keytype} ${length}\" -N \"\"",
-			user    => "puppet",
-			group   => "puppet",
+			user    => 'puppet',
+			group   => 'puppet',
 			creates => $keyfile,
-			before  => File[$keyfile, "${keyfile}.pub"],
+			before  => [ File[$keyfile], File["${keyfile}.pub"] ],
 			require => File[$keydir]
 		}
 	} # if $ensure  == "present"

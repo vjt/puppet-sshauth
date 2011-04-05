@@ -2,9 +2,20 @@
 #
 # Install generated key pairs onto clients
 
-define sshauth::client ($ensure="", $filename="", $group="", $home="", $user="") {
+define sshauth::client ($ensure = '', $filename = '', $group = '', $home = '',
+ 												$user= '') {
 	# Collect the exported client keys.
 	# Override the defaults set in sshauth::key, as needed.
+	
+	# Sanitize user and home
+	$_home = $home ? {
+		'' => $user ? {
+			'' => '',
+			default => "/home/${user}"
+		},
+		default => $home
+	}
+	
 	if $ensure { 
 		Sshauth::Key::Client <| tag == $name |> { 
 			ensure => $ensure 
@@ -25,14 +36,13 @@ define sshauth::client ($ensure="", $filename="", $group="", $home="", $user="")
 
 	if $user {
 		Sshauth::Key::Client <| tag == $name |> {
-			user => $user,
-			home => "/home/$user"
+			user => $user
 		}
 	}
 
-	if $home {
+	if $_home {
 		Sshauth::Key::Client <| tag == $name |> {
-			home => $home
+			home => $_home
 		}
 	}                       
 
