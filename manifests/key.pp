@@ -10,23 +10,49 @@
 # or client.  The real work of creating, installing, and removing keys
 # is done in the private definitions called by the virtual resources:
 # ssh_auth_key_{master,server,client}.
-
-define sshauth::key ($ensure = present, $filename = '', $force = false,
-										 $group = 'puppet', $home = '', $keytype = 'rsa',
-										 $length = 2048, $maxdays = '', $mindate = '',
-										 $options = '', $user = '', $managed = false) {
-	sshauth::key::namecheck { "${name}-name": parm => 'name', value => $name }
+#
+define sshauth::key ($ensure   = present,
+										 $filename = '',
+										 $force    = false,
+										 $group    = 'puppet',
+										 $home     = '',
+										 $keytype  = 'rsa',
+										 $length   = '2048',
+										 $maxdays  = '',
+										 $mindate  = '',
+										 $options  = '',
+										 $user     = '',
+										 $managed  = false) {
+	sshauth::key::namecheck { "${name}-name":
+		parm  => 'name',
+		value => $name,
+	}
 
 	# apply defaults
-	$_filename = $filename ? { '' => "id_${keytype}", default => $filename }
-	$_length = $keytype ? { 'rsa' => $length, 'dsa' => 1024 }
+	$_filename = $filename ? {
+		''      => "id_${keytype}",
+		default => $filename,
+	}
+	
+	$_length = $keytype ? {
+		'rsa' => $length,
+		'dsa' => '1024',
+	}
+	
 	$_user = $user ? {
 		''      => regsubst($name, '^([^@]*)@?.*$', '\1'),
 		default => $user,
 	}
-	$_home = $home ? { '' => "/home/${_user}",  default => $home }
+	
+	$_home = $home ? {
+		''      => "/home/${_user}",
+		default => $home,
+	}
 
-	sshauth::key::namecheck { "${name}-filename": parm => 'filename', value => $_filename }
+	sshauth::key::namecheck { "${name}-filename":
+		parm  => 'filename',
+		value => $_filename,
+	}
 
 	@@sshauth::key::master { $name:
 		ensure  => $ensure,
@@ -35,7 +61,7 @@ define sshauth::key ($ensure = present, $filename = '', $force = false,
 		length  => $_length,
 		maxdays => $maxdays,
 		mindate => $mindate,
-		tag     => $name
+		tag     => $name,
 	}
 
 	@@sshauth::key::client { $name:
@@ -45,7 +71,7 @@ define sshauth::key ($ensure = present, $filename = '', $force = false,
 		home     => $_home,
 		user     => $_user,
 		managed  => $managed,
-		tag      => $name
+		tag      => $name,
 	}
 
 	@@sshauth::key::server { $name:
@@ -55,6 +81,6 @@ define sshauth::key ($ensure = present, $filename = '', $force = false,
 		user    => $_user,
 		managed => $managed,
 		options => $options,
-		tag     => $name
+		tag     => $name,
 	}
 }

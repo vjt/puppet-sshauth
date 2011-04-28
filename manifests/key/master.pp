@@ -4,31 +4,37 @@
 # This definition is private, i.e. it is not intended to be called directly by users.
 # ssh::auth::key calls it to create virtual keys, which are realized in ssh::auth::keymaster.
 
-define sshauth::key::master ($ensure, $force, $keytype, $length, $maxdays, $mindate) {
+define sshauth::key::master ($ensure,
+														 $force,
+														 $keytype,
+														 $length,
+														 $maxdays,
+														 $mindate) {
 	include sshauth::params
 	
 	Exec { path => '/usr/bin:/usr/sbin:/bin:/sbin' }
+	
 	File {
-		owner => puppet,
-		group => puppet,
-		mode  => 600
+		owner => 'puppet',
+		group => 'puppet',
+		mode  => '0600',
 	}
 
 	$keydir  = "${sshauth::params::keymaster_storage}/${name}"
 	$keyfile = "${keydir}/key"
 
 	file { $keydir:
-			ensure => directory,
-			mode   => 644
+		ensure => directory,
+		mode   => '0644',
 	}
 	
 	file { $keyfile:
-		ensure => $ensure
+		ensure => $ensure,
 	}
 	
 	file { "${keyfile}.pub":
 		ensure => $ensure,
-		mode   => 644
+		mode   => '0644',
 	}
 
 	if $ensure == 'present' {
@@ -39,7 +45,7 @@ define sshauth::key::master ($ensure, $force, $keytype, $length, $maxdays, $mind
 		$keycontent = file("${keyfile}.pub", '/dev/null')
 		if $keycontent {
 			if $force {
-        		$reason = 'force=true'
+        $reason = 'force=true'
 			}
 			
 			if !$reason and $mindate and generate('/usr/bin/find', $keyfile, '!', '-newermt', "${mindate}") {
@@ -63,7 +69,7 @@ define sshauth::key::master ($ensure, $force, $keytype, $length, $maxdays, $mind
 			if $reason {
 				exec { "Revoke previous key ${name}: ${reason}":
 					command => "rm ${keyfile} ${keyfile}.pub",
-					before  => Exec["Create key ${name}: ${keytype}, ${length} bits"]
+					before  => Exec["Create key ${name}: ${keytype}, ${length} bits"],
 				}
 			}
 		}
@@ -79,7 +85,7 @@ define sshauth::key::master ($ensure, $force, $keytype, $length, $maxdays, $mind
 			group   => 'puppet',
 			creates => $keyfile,
 			before  => [ File[$keyfile], File["${keyfile}.pub"] ],
-			require => File[$keydir]
+			require => File[$keydir],
 		}
 	} # if $ensure  == "present"
 }

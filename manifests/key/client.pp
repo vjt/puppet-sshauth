@@ -3,7 +3,12 @@
 # Install a key pair into a user's account.
 # This definition is private, i.e. it is not intended to be called directly by users.
 
-define sshauth::key::client ($ensure, $filename, $group, $home, $user, $managed) {
+define sshauth::key::client ($ensure,
+														 $filename,
+														 $group,
+														 $home,
+														 $user,
+														 $managed) {
 	include sshauth::params
 	
 	# Introduce dependencies on the user and home directory only if we are managed
@@ -11,8 +16,8 @@ define sshauth::key::client ($ensure, $filename, $group, $home, $user, $managed)
 		File {
 			owner   => $user,
 			group   => $group,
-			mode    => 600,
-			require => [ User[$user], File[$home] ]
+			mode    => '0600',
+			require => [ User[$user], File[$home] ],
 		}
 	}
 
@@ -24,14 +29,14 @@ define sshauth::key::client ($ensure, $filename, $group, $home, $user, $managed)
 		$keytype = $1
 		$modulus = $2
 		file { $key_tgt_file:
-				ensure  => $ensure,
-				content => file($key_src_file, '/dev/null')
+			ensure  => $ensure,
+			content => file($key_src_file, '/dev/null'),
 		}
 		
 		file { "${key_tgt_file}.pub":
 			ensure  => $ensure,
 			content => "${keytype} ${modulus} ${name}\n",
-			mode    => 644
+			mode    => '0644',
 		}
 	} else {
 		notify { "Private key file ${key_src_file} for key ${name} not found on keymaster; skipping ensure => present": }

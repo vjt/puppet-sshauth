@@ -3,7 +3,12 @@
 # Install a public key into a server user's authorized_keys(5) file.
 # This definition is private, i.e. it is not intended to be called directly by users.
 
-define sshauth::key::server ($ensure, $group, $home, $options, $user, $managed) {
+define sshauth::key::server ($ensure,
+														 $group,
+														 $home,
+														 $options,
+														 $user,
+														 $managed) {
 	include sshauth::params
 	
 	# on the keymaster:
@@ -18,14 +23,14 @@ define sshauth::key::server ($ensure, $group, $home, $options, $user, $managed) 
 		File {
 			owner   => $user,
 			group   => $group,
+			mode    => '0600',
 			require => User[$user],
-			mode    => 600
 		}
 	}
 
 	Ssh_authorized_key {
 		user   => $user,
-		target => $key_tgt_file
+		target => $key_tgt_file,
 	}
 
 	if $ensure == 'absent' {
@@ -47,7 +52,10 @@ define sshauth::key::server ($ensure, $group, $home, $options, $user, $managed) 
 					ensure  => present,
 					type    => $keytype,
 					key     => $modulus,
-					options => $options ? { '' => undef, default => $options }
+					options => $options ? {
+						''      => undef,
+						default => $options,
+					},
 				}
 			}
 		}
