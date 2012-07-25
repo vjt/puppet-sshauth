@@ -9,9 +9,9 @@ class sshauth::keymaster {
 	# Set up key storage
 	file { $sshauth::params::keymaster_storage:
 		ensure => directory,
-		owner  => 'puppet',
-		group  => 'puppet',
-		mode   => '0644',
+		owner  => 'pe-puppet',
+		group  => 'pe-puppet',
+		mode   => '0755',
 	}
 
 	# Collect all exported master keys
