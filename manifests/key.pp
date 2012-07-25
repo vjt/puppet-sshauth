@@ -14,7 +14,7 @@
 define sshauth::key ($ensure   = present,
 										 $filename = '',
 										 $force    = false,
-										 $group    = 'puppet',
+										 $group    = 'pe-puppet',
 										 $home     = '',
 										 $keytype  = 'rsa',
 										 $length   = '2048',

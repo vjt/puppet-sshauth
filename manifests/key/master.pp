@@ -15,8 +15,8 @@ define sshauth::key::master ($ensure,
 	Exec { path => '/usr/bin:/usr/sbin:/bin:/sbin' }
 	
 	File {
-		owner => 'puppet',
-		group => 'puppet',
+		owner => 'pe-puppet',
+		group => 'pe-puppet',
 		mode  => '0600',
 	}
 
@@ -81,8 +81,8 @@ define sshauth::key::master ($ensure,
 		# the key length.
 		exec { "Create key ${name}: ${keytype}, ${length} bits":
 			command => "ssh-keygen -t ${keytype} -b ${length} -f ${keyfile} -C \"${keytype} ${length}\" -N \"\"",
-			user    => 'puppet',
-			group   => 'puppet',
+			user    => 'pe-puppet',
+			group   => 'pe-puppet',
 			creates => $keyfile,
 			before  => [ File[$keyfile], File["${keyfile}.pub"] ],
 			require => File[$keydir],
